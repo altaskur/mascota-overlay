@@ -1,0 +1,39 @@
+main{
+    width: 100vw;
+    height: 100vh;
+}
+main div.mapache-frame{
+    width: 100%;
+    height: 100%;
+
+    background-image: url("/assets/img/mapache/Estatico.png");
+    background-repeat: no-repeat;
+    background-position: -10vw bottom;
+    background-size: 80vh;
+}
+
+main div.tooltip{
+    position: absolute;
+    background-color: rgb(67, 67, 67);
+
+    border-radius: 2vw;
+    border: 4px solid rgb(147, 147, 147);
+
+    top: 40vh;
+    left: 50vh;
+
+    width: max-content;
+    max-width: 50vw;
+    height: max-content;
+
+    padding: 18px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+main div.tooltip .tooltip-inner{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: xx-large;
+}
