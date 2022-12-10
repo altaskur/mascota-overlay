@@ -1,6 +1,8 @@
 import { QUEUE_STATUS, QueueEvent } from './connect'
 import { ChatUserstate } from 'tmi.js'
 
+const params: string[] = ['hola', 'buenas']
+
 export function onNewEvent (userState: ChatUserstate, message: string, eventType: string, QUEUE_EVENTS: QueueEvent[]): void {
   const actualEvent: QueueEvent = {
     type: eventType,
@@ -27,17 +29,17 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
     greetings(ACTUAL_EVENT.userState.username, ACTUAL_EVENT.userState['first-msg'], ACTUAL_EVENT.message)
 
   setTimeout(() => {
+    console.log('Finalizado evento!')
     QUEUE_EVENTS.shift()
     console.log(QUEUE_EVENTS)
   }, ANIMATION_TIME)
 }
 
-export function getEventType (userState: ChatUserstate, message: string): string {
+export function getEventType (userState: ChatUserstate): string {
   let queueType: string = ''
   const FIRST_MESSAGE: boolean = userState['first-msg']
-
-  message = message.toLowerCase()
-  if (message.includes('hola') || message.includes('buenas') || FIRST_MESSAGE) {
+  const arr: string[] = ['hola', 'buenas']
+  if (arr.every(param => params.includes(param)) || FIRST_MESSAGE) {
     queueType = 'greetings'
   } else {
     queueType = 'none'
