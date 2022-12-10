@@ -11,6 +11,8 @@ export function onNewEvent (userState: ChatUserstate, message: string, eventType
   // TODO! QUEUE_EVENTS DON'T PUSH ANYTHING
   QUEUE_EVENTS.unshift(actualEvent)
 
+  console.log('QUEUE_EVENTS_lenght', QUEUE_EVENTS.length)
+  console.log('QUEUE_EVENTS', QUEUE_EVENTS)
 
   QUEUE_STATUS.status &&
     processQueue(QUEUE_EVENTS)
@@ -25,7 +27,6 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
     greetings(ACTUAL_EVENT.userState.username, ACTUAL_EVENT.userState['first-msg'], ACTUAL_EVENT.message)
 
   setTimeout(() => {
-    console.log('Finalizado evento!')
     QUEUE_EVENTS.shift()
     console.log(QUEUE_EVENTS)
   }, ANIMATION_TIME)
