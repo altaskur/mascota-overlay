@@ -7,10 +7,10 @@ export function onNewEvent (userState: ChatUserstate, message: string, eventType
     userState,
     message
   }
-  console.log(actualEvent)
 
   // TODO! QUEUE_EVENTS DON'T PUSH ANYTHING
   QUEUE_EVENTS.unshift(actualEvent)
+
 
   QUEUE_STATUS.status &&
     processQueue(QUEUE_EVENTS)
@@ -19,8 +19,6 @@ export function onNewEvent (userState: ChatUserstate, message: string, eventType
 function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
   const ANIMATION_TIME = 3000 // ms
   const ACTUAL_EVENT = QUEUE_EVENTS[0]
-  console.log('Lanzamos evento')
-  console.log(QUEUE_EVENTS)
   ACTUAL_EVENT.userState.username = ACTUAL_EVENT.userState.username ?? ''
 
   ACTUAL_EVENT.type === 'greetings' &&
