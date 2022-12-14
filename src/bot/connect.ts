@@ -1,6 +1,6 @@
 
 import tmi, { ChatUserstate } from 'tmi.js'
-import { onNewEvent, getEventType, greetings } from './functions'
+import { onNewEvent, getEventType } from './functions'
 
 export const CHANNEL_NAME = 'altaskur'
 
@@ -36,9 +36,6 @@ client.on('message', (_channel, userstate, message) => {
 
   const eventType = getEventType(userstate, message)
 
-  eventType !== 'none' &&
+  eventType === 'greetings' &&
     onNewEvent(userstate, message, eventType, QUEUE_EVENTS)
-
-  getEventType(userstate, message) === 'greetings' &&
-    greetings(userstate.username, userstate['first-msg'], message)
 })

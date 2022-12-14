@@ -1,0 +1,26 @@
+.greetings{
+    animation:
+    greetings 0.2s steps(1) 1 0s forwards,
+    greetings2 0.2s steps(1) 1 0.1s forwards,
+    idle 0.25s steps(2) 1 0.2s forwards;
+}
+
+.idle{
+    background-position:0px 0px;
+    background-size: 1300px ;
+}
+
+@keyframes greetings {
+    0% {  background-position:-231px 0px; }
+    100% { background-position: -231px 0px; }
+}
+
+@keyframes greetings2 {
+    0% {  background-position:-462px 0px; }
+    100% { background-position: -462px 0px; }
+}
+
+@keyframes idle {
+    0% { background-position: -462px 0px; }
+   100%{ background-position:0px 0px;}
+}
