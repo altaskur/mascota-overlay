@@ -1,6 +1,6 @@
 
 import tmi, { ChatUserstate } from 'tmi.js'
-import { onNewEvent, getEventType } from './functions'
+import { onNewEvent, getEventType, greetings } from './functions'
 
 export const CHANNEL_NAME = 'altaskur'
 
@@ -30,12 +30,17 @@ client.once('connected', () => {
   console.log('Conectado al canal: ' + CHANNEL_NAME)
 })
 
-client.on('message', (_channel, userstate, message) => {
-  // TODO: apuntar esto!! forma de eliminar opcionales
-  userstate.username = userstate.username ?? ''
+client.on('message', (_channel, userState, message) => {
+  userState.username = userState.username ?? ''
+  const messageLowerCase = message.toLowerCase()
+  // todo Hacer que también salude con las primeras intervenciones
 
-  const eventType = getEventType(userstate, message)
+  const firstMsg: boolean = userState['first-msg']
 
+  firstMsg &&
+    onNewEvent(userState, messageLowerCase, 'greetings', QUEUE_EVENTS)
+
+  const eventType = getEventType(userState, messageLowerCase)
   eventType === 'greetings' &&
-    onNewEvent(userstate, message, eventType, QUEUE_EVENTS)
+    onNewEvent(userState, messageLowerCase, eventType, QUEUE_EVENTS)
 })
