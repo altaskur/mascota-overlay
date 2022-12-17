@@ -30,9 +30,15 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
 
   ACTUAL_EVENT.type === 'greetings' &&
     greetings(ACTUAL_EVENT.userState.username, ACTUAL_EVENT.userState['first-msg'], ACTUAL_EVENT.message)
-
   if (ACTUAL_EVENT.type === 'greetings') {
     animation = 'greetings'
+  }
+
+  ACTUAL_EVENT.type === 'angry' &&
+    angry(ACTUAL_EVENT.userState.username, ACTUAL_EVENT.userState['first-msg'], ACTUAL_EVENT.message)
+
+  if (ACTUAL_EVENT.type === 'angry') {
+    animation = 'angry'
   }
 
   setTimeout(() => {
@@ -46,17 +52,19 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
 export function getEventType (userState: ChatUserstate, message: string): string {
   let queueType: string = 'none'
 
-  const arr: string[] = ['hola', 'buenas', 'holi', 'holiwi']
+  const greetingTriggers: string[] = ['hola', 'buenas', 'holi', 'holiwi']
+  const eventsGreeting = greetingTriggers.filter((element) => message.includes(element))
 
-  const eventsGreeting = arr.filter((element) => message.includes(element))
+  const angryTriggers: string[] = ['python', 'psql']
+  const eventsAngry = angryTriggers.filter((element) => message.includes(element))
 
   if (eventsGreeting.length > 0) queueType = 'greetings'
+  if (eventsAngry.length > 0) queueType = 'angry'
 
-  console.log(queueType)
   return queueType
 }
 
-export async function greetings (nick: string, first: boolean, message: string): void {
+export async function greetings (nick: string, first: boolean, message: string): Promise<void> {
   message = first ? `Bienvenida/o @${nick}` : `Saludos @${nick}`
 
   TOOLTIP_DIV.classList.add('show-tooltip')
@@ -66,6 +74,28 @@ export async function greetings (nick: string, first: boolean, message: string):
 
   const audio = document.querySelector('audio') as HTMLAudioElement
   audio.src = '/assets/sounds/tanuki2.aac'
+  audio.volume = 30 / 100
+  await audio.play()
+}
+
+export async function angry (nick: string, first: boolean, message: string): Promise<void> {
+  message = `@${nick} No me gusta eso que has dicho`
+  TOOLTIP_DIV.classList.add('show-tooltip')
+  petDiv.classList.remove('idle')
+  petDiv.classList.add('angry')
+  TOOLTIP_INNER.textContent = message
+
+  const audio = document.querySelector('audio') as HTMLAudioElement
+  const ramdom = Math.floor(Math.random() * 40)
+  let song = ''
+  if (ramdom < 10) {
+    song = 'annoyance1.aac'
+  } else if (ramdom > 20) {
+    song = 'annoyance2.aac'
+  } else if (ramdom > 30) {
+    song = 'annoyance3.aac'
+  }
+  audio.src = `/assets/sounds/${song}`
   audio.volume = 30 / 100
   await audio.play()
 }

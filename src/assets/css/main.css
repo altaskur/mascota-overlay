@@ -6,11 +6,10 @@ main div.mapache-frame {
     width: 695px;
     width: 231.66px;
     height: 200px;
-    background-image: url("/assets/img/mapache/sprite.png");
-    background-repeat: repeat-x;
-
-    background-size: cover;
-
+    /* width: 600px;
+    height: 600px; */
+    background-image: url("/assets/img/mapache/sprite2.png");
+    background-repeat: no-repeat;
 }
 
 main div.tooltip {

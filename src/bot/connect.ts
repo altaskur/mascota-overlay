@@ -35,12 +35,12 @@ client.on('message', (_channel, userState, message) => {
   const messageLowerCase = message.toLowerCase()
   // todo Hacer que también salude con las primeras intervenciones
 
-  const firstMsg: boolean = userState['first-msg']
+  // const firstMsg: boolean = userState['first-msg']
 
-  firstMsg &&
-    onNewEvent(userState, messageLowerCase, 'greetings', QUEUE_EVENTS)
+  // firstMsg &&
+  //   onNewEvent(userState, messageLowerCase, 'greetings', QUEUE_EVENTS)
 
   const eventType = getEventType(userState, messageLowerCase)
-  eventType === 'greetings' &&
+  eventType !== 'none' &&
     onNewEvent(userState, messageLowerCase, eventType, QUEUE_EVENTS)
 })
