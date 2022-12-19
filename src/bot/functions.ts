@@ -1,7 +1,6 @@
-import { QUEUE_STATUS, QueueEvent } from './connect'
+import { QUEUE_STATUS, QueueEvent, TANUKY_STATUS, TanukyStatus } from './connect'
 import { ChatUserstate } from 'tmi.js'
 
-// const params: string[] = ['hola', 'buenas']
 const petDiv = document.querySelector('div.mapache-frame') as HTMLDivElement
 const TOOLTIP_DIV = document.querySelector('div.tooltip') as HTMLDivElement
 const TOOLTIP_INNER = document.querySelector('.tooltip-inner') as HTMLDivElement
@@ -24,6 +23,7 @@ export function onNewEvent (userState: ChatUserstate, message: string, eventType
 }
 
 function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
+  QUEUE_STATUS.status = false
   const ACTUAL_EVENT = QUEUE_EVENTS[0]
   ACTUAL_EVENT.userState.username = ACTUAL_EVENT.userState.username ?? ''
   let animation = 'idle'
@@ -41,11 +41,20 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
     animation = 'angry'
   }
 
+  ACTUAL_EVENT.type === 'hungry' &&
+  eating(TANUKY_STATUS)
+
+  if (ACTUAL_EVENT.type === 'hungry') {
+    animation = 'eating'
+  }
+
   setTimeout(() => {
     console.log('Finalizado evento!')
     QUEUE_EVENTS.shift()
     console.log(QUEUE_EVENTS)
     clearAnimation(animation)
+    QUEUE_STATUS.status = true
+    if (QUEUE_EVENTS.length > 0) { processQueue(QUEUE_EVENTS) }
   }, ANIMATION_TIME)
 }
 
@@ -58,13 +67,17 @@ export function getEventType (userState: ChatUserstate, message: string): string
   const angryTriggers: string[] = ['python', 'psql']
   const eventsAngry = angryTriggers.filter((element) => message.includes(element))
 
+  const hungryTriggers: string[] = ['!comer']
+  const eventsHungry = hungryTriggers.filter((element) => message.startsWith(element))
+
   if (eventsGreeting.length > 0) queueType = 'greetings'
   if (eventsAngry.length > 0) queueType = 'angry'
+  if (eventsHungry.length > 0) queueType = 'hungry'
 
   return queueType
 }
 
-export async function greetings (nick: string, first: boolean, message: string): Promise<void> {
+async function greetings (nick: string, first: boolean, message: string): Promise<void> {
   message = first ? `Bienvenida/o @${nick}` : `Saludos @${nick}`
 
   TOOLTIP_DIV.classList.add('show-tooltip')
@@ -78,7 +91,7 @@ export async function greetings (nick: string, first: boolean, message: string):
   await audio.play()
 }
 
-export async function angry (nick: string, first: boolean, message: string): Promise<void> {
+async function angry (nick: string, first: boolean, message: string): Promise<void> {
   message = `@${nick} No me gusta eso que has dicho`
   TOOLTIP_DIV.classList.add('show-tooltip')
   petDiv.classList.remove('idle')
@@ -86,18 +99,28 @@ export async function angry (nick: string, first: boolean, message: string): Pro
   TOOLTIP_INNER.textContent = message
 
   const audio = document.querySelector('audio') as HTMLAudioElement
-  const ramdom = Math.floor(Math.random() * 40)
+  const random = Math.floor(Math.random() * 40)
   let song = ''
-  if (ramdom < 10) {
+  if (random < 10) {
     song = 'annoyance1.aac'
-  } else if (ramdom > 20) {
+  } else if (random > 20) {
     song = 'annoyance2.aac'
-  } else if (ramdom > 30) {
+  } else if (random > 30) {
     song = 'annoyance3.aac'
   }
   audio.src = `/assets/sounds/${song}`
   audio.volume = 30 / 100
   await audio.play()
+}
+
+function eating (TANUKY_STATUS: TanukyStatus): void {
+  if (TANUKY_STATUS.hungry !== 100) {
+    petDiv.classList.remove('idle')
+    petDiv.classList.add('eating')
+  } else {
+    petDiv.classList.remove('idle')
+    petDiv.classList.add('eating')
+  }
 }
 
 export function clearAnimation (animation: string): void {

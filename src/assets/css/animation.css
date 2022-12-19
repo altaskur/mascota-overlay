@@ -7,10 +7,7 @@
         background-position: -231px 0px;
     }
 
-    50% {
-        background-position: -462px 0px;
-    }
-
+    50%,
     100% {
         background-position: -462px 0px;
     }
@@ -25,46 +22,24 @@
         background-position: 0px -200px;
     }
 
-    50% {
+    50%,
+    100% {
         background-position: -462px -200px;
     }
-
-    100% {
-        background-position: 0px -200px;
-    }
 }
 
-/* .idle {
-    background-position: 0px 0px;
-    background-size: 1300px;
+.eating {
+    animation: eating 1s steps(1) infinite forwards;
 }
 
-@keyframes greetings {
+@keyframes eating {
     0% {
-        background-position: -231px 0px;
+        background-position: 0px -400px;
     }
 
+    50%,
     100% {
-        background-position: -231px 0px;
+        background-position: -232px -400px;
     }
+
 }
-
-@keyframes greetings2 {
-    0% {
-        background-position: -462px 0px;
-    }
-
-    100% {
-        background-position: -462px 0px;
-    }
-}
-
-@keyframes idle {
-    0% {
-        background-position: -462px 0px;
-    }
-
-    100% {
-        background-position: 0px 0px;
-    }
-} */

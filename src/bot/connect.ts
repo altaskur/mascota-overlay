@@ -1,6 +1,5 @@
-
 import tmi, { ChatUserstate } from 'tmi.js'
-import { onNewEvent, getEventType, greetings } from './functions'
+import { onNewEvent, getEventType } from './functions'
 
 export const CHANNEL_NAME = 'altaskur'
 
@@ -17,11 +16,19 @@ export interface QueueEvent {
   message: string
 }
 
+export interface TanukyStatus {
+  hungry: number
+}
+
 export const QUEUE_EVENTS: QueueEvent[] = []
 
 export const QUEUE_STATUS: QueueStatus = {
   status: true
 }
+export const TANUKY_STATUS: TanukyStatus = {
+  hungry: 100
+}
+
 client.once('connecting', () => {
   console.log('Conectándome al canal: ' + CHANNEL_NAME)
 })
