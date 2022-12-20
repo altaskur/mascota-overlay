@@ -48,6 +48,11 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
     animation = 'eating'
   }
 
+  if (ACTUAL_EVENT.type === 'kiss') {
+    kiss()
+    animation = 'greetings'
+  }
+
   setTimeout(() => {
     console.log('Finalizado evento!')
     QUEUE_EVENTS.shift()
@@ -70,9 +75,19 @@ export function getEventType (userState: ChatUserstate, message: string): string
   const hungryTriggers: string[] = ['!comer']
   const eventsHungry = hungryTriggers.filter((element) => message.startsWith(element))
 
+  const kissTriggers: string[] = ['!besito', '!beso']
+  const eventsKiss = kissTriggers.filter((element) => message.startsWith(element))
+
   if (eventsGreeting.length > 0) queueType = 'greetings'
   if (eventsAngry.length > 0) queueType = 'angry'
-  if (eventsHungry.length > 0) queueType = 'hungry'
+  if (eventsHungry.length > 0) {
+    if (TANUKY_STATUS.hungry >= 90) {
+      queueType = 'angry'
+    } else {
+      queueType = 'hungry'
+    }
+  }
+  if (eventsKiss.length > 0) queueType = 'kiss'
 
   return queueType
 }
@@ -114,13 +129,19 @@ async function angry (nick: string, first: boolean, message: string): Promise<vo
 }
 
 function eating (TANUKY_STATUS: TanukyStatus): void {
-  if (TANUKY_STATUS.hungry !== 100) {
-    petDiv.classList.remove('idle')
-    petDiv.classList.add('eating')
-  } else {
-    petDiv.classList.remove('idle')
-    petDiv.classList.add('eating')
+  petDiv.classList.remove('idle')
+  petDiv.classList.add('eating')
+  TANUKY_STATUS.hungry += 20
+  if (TANUKY_STATUS.hungry > 100) {
+    TANUKY_STATUS.hungry = 100
   }
+}
+
+export function kiss (): void {
+  TOOLTIP_DIV.classList.add('show-tooltip')
+  TOOLTIP_INNER.textContent = '💖💖'
+  petDiv.classList.remove('idle')
+  petDiv.classList.add('greetings')
 }
 
 export function clearAnimation (animation: string): void {

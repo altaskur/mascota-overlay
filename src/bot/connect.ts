@@ -1,4 +1,5 @@
 import tmi, { ChatUserstate } from 'tmi.js'
+import { changeHungryBar } from './food/food'
 import { onNewEvent, getEventType } from './functions'
 
 export const CHANNEL_NAME = 'altaskur'
@@ -35,6 +36,10 @@ client.once('connecting', () => {
 
 client.once('connected', () => {
   console.log('Conectado al canal: ' + CHANNEL_NAME)
+  const hungryTimmer = setInterval(() => {
+    TANUKY_STATUS.hungry -= 0.1
+    changeHungryBar(TANUKY_STATUS.hungry)
+  }, 1000)
 })
 
 client.on('message', (_channel, userState, message) => {
