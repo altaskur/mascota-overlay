@@ -5,6 +5,7 @@ const petDiv = document.querySelector('div.mapache-frame') as HTMLDivElement
 const TOOLTIP_DIV = document.querySelector('div.tooltip') as HTMLDivElement
 const TOOLTIP_INNER = document.querySelector('.tooltip-inner') as HTMLDivElement
 const ANIMATION_TIME = 2000 // ms
+const AUDIO = document.querySelector('audio') as HTMLAudioElement
 
 export function onNewEvent (userState: ChatUserstate, message: string, eventType: string, QUEUE_EVENTS: QueueEvent[]): void {
   const actualEvent: QueueEvent = {
@@ -100,10 +101,9 @@ async function greetings (nick: string, first: boolean, message: string): Promis
   petDiv.classList.add('greetings')
   TOOLTIP_INNER.textContent = message
 
-  const audio = document.querySelector('audio') as HTMLAudioElement
-  audio.src = '/assets/sounds/tanuki2.aac'
-  audio.volume = 30 / 100
-  await audio.play()
+  AUDIO.src = '/assets/sounds/tanuki2.aac'
+  AUDIO.volume = 30 / 100
+  await AUDIO.play()
 }
 
 async function angry (nick: string, first: boolean, message: string): Promise<void> {
@@ -113,7 +113,6 @@ async function angry (nick: string, first: boolean, message: string): Promise<vo
   petDiv.classList.add('angry')
   TOOLTIP_INNER.textContent = message
 
-  const audio = document.querySelector('audio') as HTMLAudioElement
   const random = Math.floor(Math.random() * 40)
   let song = ''
   if (random < 10) {
@@ -123,14 +122,25 @@ async function angry (nick: string, first: boolean, message: string): Promise<vo
   } else if (random > 30) {
     song = 'annoyance3.aac'
   }
-  audio.src = `/assets/sounds/${song}`
-  audio.volume = 30 / 100
-  await audio.play()
+  AUDIO.src = `/assets/sounds/${song}`
+  AUDIO.volume = 30 / 100
+  await AUDIO.play()
 }
 
-function eating (TANUKY_STATUS: TanukyStatus): void {
+async function eating (TANUKY_STATUS: TanukyStatus): Promise<void> {
   petDiv.classList.remove('idle')
   petDiv.classList.add('eating')
+  const random = Math.floor(Math.random() * 30)
+  let song = ''
+  if (random < 10) {
+    song = 'eat1.aac'
+  } else if (random > 20) {
+    song = 'eat2.aac'
+  }
+  AUDIO.src = `/assets/sounds/${song}`
+  AUDIO.volume = 30 / 100
+  await AUDIO.play()
+  AUDIO.volume = 30 / 100
   TANUKY_STATUS.hungry += 20
   if (TANUKY_STATUS.hungry > 100) {
     TANUKY_STATUS.hungry = 100

@@ -38,6 +38,9 @@ client.once('connected', () => {
   console.log('Conectado al canal: ' + CHANNEL_NAME)
   const hungryTimmer = setInterval(() => {
     TANUKY_STATUS.hungry -= 0.1
+    if (TANUKY_STATUS.hungry < 0) {
+      TANUKY_STATUS.hungry = 0
+    }
     changeHungryBar(TANUKY_STATUS.hungry)
   }, 1000)
 })
@@ -47,10 +50,10 @@ client.on('message', (_channel, userState, message) => {
   const messageLowerCase = message.toLowerCase()
   // todo Hacer que también salude con las primeras intervenciones
 
-  // const firstMsg: boolean = userState['first-msg']
+  const firstMsg: boolean = userState['first-msg']
 
-  // firstMsg &&
-  //   onNewEvent(userState, messageLowerCase, 'greetings', QUEUE_EVENTS)
+  firstMsg &&
+    onNewEvent(userState, messageLowerCase, 'greetings', QUEUE_EVENTS)
 
   const eventType = getEventType(userState, messageLowerCase)
   eventType !== 'none' &&
