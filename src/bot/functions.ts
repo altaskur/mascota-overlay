@@ -73,7 +73,7 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
 export function getEventType (userState: ChatUserstate, message: string): string {
   let queueType: string = 'none'
 
-  const greetingTriggers: string[] = ['hola', 'buenas', 'holi', 'holiwi', 'hello', ' hi ']
+  const greetingTriggers: string[] = ['hola', 'buenas', 'holi', 'holiwi', 'hello']
   const eventsGreeting = greetingTriggers.filter((element) => message.includes(element))
 
   const angryTriggers: string[] = ['python', 'psql', 'goose', 'ganso']
