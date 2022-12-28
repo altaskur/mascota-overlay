@@ -48,7 +48,8 @@ main div.tooltip.show-tooltip {
     visibility: visible;
 }
 
-main div.hungryBar {
+main div.hungryBar,
+main div.sleepBar {
     position: absolute;
     bottom: 0;
     left: 35px;
@@ -66,7 +67,16 @@ main div.hungryBar {
 
 }
 
-div.hungryBar div.hungryBarStatus {
+main div.sleepBar {
+    bottom: 50px;
+}
+
+main div.hungry {
+    bottom: 70px;
+}
+
+div.hungryBar div.hungryBarStatus,
+div.sleepBar div.sleepBarStatus {
     height: 100%;
     width: 100%;
     border-radius: 8px;
@@ -74,7 +84,8 @@ div.hungryBar div.hungryBarStatus {
 
 }
 
-div.hungryBar div.hungryText {
+div.hungryBar div.hungryText,
+div.sleepBar div.sleepText {
     position: relative;
     text-align: center;
 

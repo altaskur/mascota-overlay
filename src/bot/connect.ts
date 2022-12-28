@@ -1,5 +1,6 @@
 import tmi, { ChatUserstate } from 'tmi.js'
-import { changeHungryBar } from './food/food'
+import { changeHungryBar } from './status/food'
+import { changeSleepBar } from './status/sleep'
 import { onNewEvent, getEventType } from './functions'
 
 export const CHANNEL_NAME = 'altaskur'
@@ -19,6 +20,8 @@ export interface QueueEvent {
 
 export interface TanukyStatus {
   hungry: number
+  sleep: number
+  status: string
 }
 
 export const QUEUE_EVENTS: QueueEvent[] = []
@@ -27,7 +30,9 @@ export const QUEUE_STATUS: QueueStatus = {
   status: true
 }
 export const TANUKY_STATUS: TanukyStatus = {
-  hungry: 100
+  hungry: 100,
+  sleep: 0,
+  status: 'idle'
 }
 
 client.once('connecting', () => {
@@ -36,12 +41,21 @@ client.once('connecting', () => {
 
 client.once('connected', () => {
   console.log('Conectado al canal: ' + CHANNEL_NAME)
-  const hungryTimmer = setInterval(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const globalTimer = setInterval(() => {
     TANUKY_STATUS.hungry -= 0.1
+    TANUKY_STATUS.sleep += 0.1
+    console.log(TANUKY_STATUS.sleep)
     if (TANUKY_STATUS.hungry < 0) {
       TANUKY_STATUS.hungry = 0
     }
+
+    if (TANUKY_STATUS.sleep >= 100) {
+      TANUKY_STATUS.sleep = 100
+    }
+
     changeHungryBar(TANUKY_STATUS.hungry)
+    // changeSleepBar(TANUKY_STATUS.sleep)
   }, 1000)
 })
 

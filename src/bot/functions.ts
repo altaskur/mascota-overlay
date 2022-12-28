@@ -7,7 +7,7 @@ const TOOLTIP_INNER = document.querySelector('.tooltip-inner') as HTMLDivElement
 const ANIMATION_TIME = 2000 // ms
 const AUDIO = document.querySelector('audio') as HTMLAudioElement
 
-export function onNewEvent (userState: ChatUserstate, message: string, eventType: string, QUEUE_EVENTS: QueueEvent[]): void {
+export function onNewEvent (userState: any, message: string, eventType: string, QUEUE_EVENTS: QueueEvent[]): void {
   const actualEvent: QueueEvent = {
     type: eventType,
     userState,
@@ -26,8 +26,9 @@ export function onNewEvent (userState: ChatUserstate, message: string, eventType
 function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
   QUEUE_STATUS.status = false
   const ACTUAL_EVENT = QUEUE_EVENTS[0]
+
   ACTUAL_EVENT.userState.username = ACTUAL_EVENT.userState.username ?? ''
-  let animation = 'idle'
+  let animation = TANUKY_STATUS.status
 
   ACTUAL_EVENT.type === 'greetings' &&
     greetings(ACTUAL_EVENT.userState.username, ACTUAL_EVENT.userState['first-msg'], ACTUAL_EVENT.message)
@@ -54,6 +55,11 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
     animation = 'greetings'
   }
 
+  if (ACTUAL_EVENT.type === 'sleep') {
+    sleep()
+    animation = 'sleep'
+  }
+
   setTimeout(() => {
     console.log('Finalizado evento!')
     QUEUE_EVENTS.shift()
@@ -67,16 +73,16 @@ function processQueue (QUEUE_EVENTS: QueueEvent[]): void {
 export function getEventType (userState: ChatUserstate, message: string): string {
   let queueType: string = 'none'
 
-  const greetingTriggers: string[] = ['hola', 'buenas', 'holi', 'holiwi']
+  const greetingTriggers: string[] = ['hola', 'buenas', 'holi', 'holiwi', 'hello', ' hi ']
   const eventsGreeting = greetingTriggers.filter((element) => message.includes(element))
 
-  const angryTriggers: string[] = ['python', 'psql']
+  const angryTriggers: string[] = ['python', 'psql', 'goose', 'ganso']
   const eventsAngry = angryTriggers.filter((element) => message.includes(element))
 
   const hungryTriggers: string[] = ['!comer']
   const eventsHungry = hungryTriggers.filter((element) => message.startsWith(element))
 
-  const kissTriggers: string[] = ['!besito', '!beso']
+  const kissTriggers: string[] = ['!besito', '!beso', 'pato', 'niv3k', 'tanuki']
   const eventsKiss = kissTriggers.filter((element) => message.startsWith(element))
 
   if (eventsGreeting.length > 0) queueType = 'greetings'
@@ -153,10 +159,14 @@ export function kiss (): void {
   petDiv.classList.remove('idle')
   petDiv.classList.add('greetings')
 }
+export function sleep (): void {
+  petDiv.classList.remove('idle')
+  petDiv.classList.add('sleep')
+}
 
 export function clearAnimation (animation: string): void {
   TOOLTIP_DIV.classList.remove('show-tooltip')
   TOOLTIP_INNER.textContent = ''
   petDiv.classList.remove(animation)
-  petDiv.classList.add('idle')
+  petDiv.classList.add(TANUKY_STATUS.status)
 }
