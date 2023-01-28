@@ -4,10 +4,10 @@ import { ChatUserstate } from 'tmi.js'
 const petDiv = document.querySelector('div.mapache-frame') as HTMLDivElement
 const TOOLTIP_DIV = document.querySelector('div.tooltip') as HTMLDivElement
 const TOOLTIP_INNER = document.querySelector('.tooltip-inner') as HTMLDivElement
-const ANIMATION_TIME = 2000 // ms
+const ANIMATION_TIME = 4300 // ms
 const AUDIO = document.querySelector('audio') as HTMLAudioElement
 
-export function onNewEvent (userState: any, message: string, eventType: string, QUEUE_EVENTS: QueueEvent[]): void {
+function onNewEvent (userState: any, message: string, eventType: string, QUEUE_EVENTS: QueueEvent[]): void {
   const actualEvent: QueueEvent = {
     type: eventType,
     userState,

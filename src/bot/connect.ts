@@ -1,70 +1,47 @@
-import tmi, { ChatUserstate } from 'tmi.js'
-import { changeHungryBar } from './status/food'
+import tmi, { Userstate } from 'tmi.js'
 
-import { onNewEvent, getEventType } from './functions'
+import { onNewEvent } from './events'
+
+export interface FilterData {
+  userName: string
+  message: string
+  firstMessage: Boolean
+}
 
 export const CHANNEL_NAME = 'altaskur'
 
 export const client = new tmi.Client({
   channels: [CHANNEL_NAME]
 })
-
-interface QueueStatus {
-  status: boolean
-}
-export interface QueueEvent {
-  type: string
-  userState: ChatUserstate
-  message: string
-}
-
-export interface TanukyStatus {
-  hungry: number
-  sleep: number
-  status: string
-}
-
-export const QUEUE_EVENTS: QueueEvent[] = []
-
-export const QUEUE_STATUS: QueueStatus = {
-  status: true
-}
-export const TANUKY_STATUS: TanukyStatus = {
-  hungry: 100,
-  sleep: 0,
-  status: 'idle'
-}
-
 client.once('connecting', () => {
-  console.log('Conectándome al canal: ' + CHANNEL_NAME)
+
 })
 
 client.once('connected', () => {
-  console.log('Conectado al canal: ' + CHANNEL_NAME)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const globalTimer = setInterval(() => {
-    TANUKY_STATUS.hungry -= 0.05
 
-    if (TANUKY_STATUS.hungry < 0) {
-      TANUKY_STATUS.hungry = 0
-    }
-
-    changeHungryBar(TANUKY_STATUS.hungry)
-    // changeSleepBar(TANUKY_STATUS.sleep)
-  }, 1000)
 })
 
 client.on('message', (_channel, userState, message) => {
+  const data = filterDataParams(message, userState)
+  onNewEvent(data)
+})
+
+client.on('action', (_channel, userState, message) => {
+  const data = filterDataParams(message, userState)
+  onNewEvent(data)
+})
+
+function filterDataParams (message: string, userState: Userstate): FilterData {
   userState.username = userState.username ?? ''
   const messageLowerCase = message.toLowerCase()
-  // todo Hacer que también salude con las primeras intervenciones
-
   const firstMsg: boolean = userState['first-msg']
+  const respuesta: FilterData = {
+    userName: userState.username,
+    message: messageLowerCase,
+    firstMessage: firstMsg
+  }
+  return respuesta
+}
 
-  firstMsg &&
-    onNewEvent(userState, messageLowerCase, 'greetings', QUEUE_EVENTS)
-
-  const eventType = getEventType(userState, messageLowerCase)
-  eventType !== 'none' &&
-    onNewEvent(userState, messageLowerCase, eventType, QUEUE_EVENTS)
-})
+// const arr = ["sdfasd","asdf","fasdf"]
+// let i = arr.length for(; i --> 0; ) { console.log(arr[i]) }
