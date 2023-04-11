@@ -1,6 +1,7 @@
 import tmi, { Userstate } from 'tmi.js'
 
 import { onNewEvent } from './events'
+import { startHungry } from './status/food'
 
 export interface FilterData {
   userName: string
@@ -12,13 +13,6 @@ export const CHANNEL_NAME = 'altaskur'
 
 export const client = new tmi.Client({
   channels: [CHANNEL_NAME]
-})
-client.once('connecting', () => {
-
-})
-
-client.once('connected', () => {
-
 })
 
 client.on('message', (_channel, userState, message) => {
@@ -35,13 +29,15 @@ function filterDataParams (message: string, userState: Userstate): FilterData {
   userState.username = userState.username ?? ''
   const messageLowerCase = message.toLowerCase()
   const firstMsg: boolean = userState['first-msg']
-  const respuesta: FilterData = {
+  const filterData: FilterData = {
     userName: userState.username,
     message: messageLowerCase,
     firstMessage: firstMsg
   }
-  return respuesta
+  return filterData
 }
+
+startHungry();
 
 // const arr = ["sdfasd","asdf","fasdf"]
 // let i = arr.length for(; i --> 0; ) { console.log(arr[i]) }

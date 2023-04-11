@@ -1,4 +1,5 @@
 import { FilterData } from './connect'
+import { feedTanuki } from './status/food'
 
 // const eventsType = {
 //   hungry: ['!comer'],
@@ -8,7 +9,7 @@ import { FilterData } from './connect'
 //   kiss: ['!kiss']
 // } satisfies Record<string, string[]>
 
-// // } satisfies Record<string, `!${string}`[]>
+//  } satisfies Record<string, `!${string}`[]>
 
 // const wordGolea = Object.entries(eventsType).reduce((prev,[key,values])=>{
 //   prev = {...prev,...values.reduce((p,v)=>({
@@ -30,6 +31,14 @@ const soundsList = {
 const eventList: string [] = []
 let altasQueueStatus = false
 let lastStatus = 'idle'
+ let tanukiHungry = 80;
+
+ export function changeHungryLevel(value:number):number{
+  tanukiHungry +=value;
+  if(tanukiHungry>100) tanukiHungry=100;
+  if(tanukiHungry<=0) tanukiHungry=0;
+  return tanukiHungry;
+}
 
 export function onNewEvent (data: FilterData): void {
   const eventType = getEventType(data)
@@ -55,7 +64,7 @@ function getEventType (data: FilterData): string {
   const isKiss = kiss.filter((element) => message.includes(element))
   result = isKiss.length > 0 ? 'kiss' : result
 
-  const annoyance = ['python', 'psql', 'ganso', 'goose']
+  const annoyance = ['psql', 'ganso', 'goose']
   const isAnnoyance = annoyance.filter((element) => message.includes(element))
   result = isAnnoyance.length > 0 ? 'annoyance' : result
 
@@ -83,8 +92,11 @@ function startTanukiEvent (tanukiEvent: string): void {
   getSound(tanukiEvent)
   startAnimation(tanukiEvent)
   startLayout(tanukiEvent);
-}
 
+  if (tanukiEvent == "hungry"){
+    feedTanuki();
+  }
+}
 function getSound (tanukiEvent: string): void {
   const soundPath = '/assets/sounds/'
   let sound = ''
@@ -92,6 +104,9 @@ function getSound (tanukiEvent: string): void {
 
   if (tanukiEvent === 'hungry') {
     eventSounds = soundsList.hungry
+  }
+  if (tanukiEvent === 'kiss') {
+    eventSounds = soundsList.tanuki
   }
   if (tanukiEvent === 'annoyance') {
     eventSounds = soundsList.annoyance
@@ -125,6 +140,9 @@ function startAnimation (tanukiEvent: string): void {
   const tanukiDiv = document.querySelector<HTMLDivElement>('div.mapache-frame')!
 
   tanukiDiv.classList.remove(lastStatus)
+  if(tanukiEvent=="kiss"){
+    tanukiEvent="greetings"
+  }
   lastStatus = tanukiEvent
   tanukiDiv.classList.add(tanukiEvent)
 }
@@ -135,6 +153,7 @@ function startLayout(tanukiEvent: string){
     TOOLTIP_DIV.classList.add('show-tooltip')
     TOOLTIP_INNER.textContent = "💖💖"
   }
+
 }
 
 function clearEvent (): void {
