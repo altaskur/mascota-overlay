@@ -10,7 +10,7 @@ export function changeHungryBar (hungryLvl: number): void {
 
 export function startHungry():void{
   setInterval(()=>{
-    changeHungryBar(changeHungryLevel(-1));
+    changeHungryBar(changeHungryLevel(-0.2));
   },6000);
 }
 
