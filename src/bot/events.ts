@@ -31,7 +31,7 @@ const soundsList = {
 const eventList: string [] = []
 let altasQueueStatus = false
 let lastStatus = 'idle'
- let tanukiHungry = 80;
+let tanukiHungry = 100;
 
  export function changeHungryLevel(value:number):number{
   tanukiHungry +=value;
