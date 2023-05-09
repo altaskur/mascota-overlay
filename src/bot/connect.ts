@@ -7,6 +7,7 @@ export interface FilterData {
   userName: string
   message: string
   firstMessage: Boolean
+  event: string|boolean
 }
 
 export const CHANNEL_NAME = 'altaskur'
@@ -32,12 +33,10 @@ function filterDataParams (message: string, userState: Userstate): FilterData {
   const filterData: FilterData = {
     userName: userState.username,
     message: messageLowerCase,
-    firstMessage: firstMsg
+    firstMessage: firstMsg,
+    event:false
   }
   return filterData
 }
 
 startHungry();
-
-// const arr = ["sdfasd","asdf","fasdf"]
-// let i = arr.length for(; i --> 0; ) { console.log(arr[i]) }

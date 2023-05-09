@@ -1,167 +1,152 @@
 import { FilterData } from './connect'
 import { feedTanuki } from './status/food'
 
-// const eventsType = {
-//   hungry: ['!comer'],
-//   sleep: ['!sleep'],
-//   greetings: ['hola', 'buenas', 'holi', 'holiwi', 'hello'],
-//   angry: ['python', 'psql', 'ganso', 'goose'],
-//   kiss: ['!kiss']
-// } satisfies Record<string, string[]>
+const eventsType: Record<string, string[]> = {
+  hungry: ['!comer'],
+  sleep: ['!sleep', '!dormir'],
+  greetings: ['hola', 'buenas', 'holi', 'holiwi', 'hello'],
+  angry: ['ganso', 'goose'],
+  kiss: ['!beso', '!besito']
+}
 
-//  } satisfies Record<string, `!${string}`[]>
+const eventMessages: Record<string, string[]> = {
+  greetings: ["¡Hola!"],
+  kiss: ["💖", "💖"]
+}
 
-// const wordGolea = Object.entries(eventsType).reduce((prev,[key,values])=>{
-//   prev = {...prev,...values.reduce((p,v)=>({
-//     ...p,
-//     [v]:key
-//   }),{})}
-//   return prev;
-// },{}) satisfies Record<string, string>;
-const TOOLTIP_DIV = document.querySelector('div.tooltip') as HTMLDivElement
-const TOOLTIP_INNER = document.querySelector('.tooltip-inner') as HTMLDivElement
-
-const soundsList = {
+const soundsList: Record<string, string[]> = {
   hungry: ['eat1.aac', 'eat2.aac'],
-  tanuki: ['tanuki1.aac', 'tanuki2.aac'],
+  greetings: ['tanuki1.aac', 'tanuki2.aac'],
   annoyance: ['annoyance3.aac', 'annoyance2.aac', 'annoyance1.aac'],
   sleep: ['sleep.aac']
-} satisfies Record<string, string[]>
+}
 
-const eventList: string [] = []
+const TOOLTIP_DIV: HTMLDivElement | null = document.querySelector('div.tooltip')
+const TOOLTIP_INNER: HTMLElement | null = document.querySelector('.tooltip-inner')
+
+const eventList: FilterData[] = []
 let altasQueueStatus = false
-let lastStatus = 'idle'
+let lastStatus: string = 'idle'
 let tanukiHungry = 100;
 
- export function changeHungryLevel(value:number):number{
-  tanukiHungry +=value;
-  if(tanukiHungry>100) tanukiHungry=100;
-  if(tanukiHungry<=0) tanukiHungry=0;
+export function changeHungryLevel(value: number): number {
+  tanukiHungry += value;
+  if (tanukiHungry > 100) tanukiHungry = 100;
+  if (tanukiHungry <= 0) tanukiHungry = 0;
   return tanukiHungry;
 }
 
-export function onNewEvent (data: FilterData): void {
+export function onNewEvent(data: FilterData): void {
   const eventType = getEventType(data)
-  if (eventType !== 'false') {
+  if (eventType.event !== false) {
     addTanukiEvent(eventType)
     processAltasQueue()
   }
 }
 
-function getEventType (data: FilterData): string {
-  const message = data.message
-  let result = 'false'
-
-  const hungry = ['!comer']
-  const isHungry = hungry.filter((element) => message.includes(element))
-  result = isHungry.length > 0 ? 'hungry' : result
-
-  const sleep = ['!dormir']
-  const isSleep = sleep.filter((element) => message.includes(element))
-  result = isSleep.length > 0 ? 'sleep' : result
-
-  const kiss = ['!besito', 'beso']
-  const isKiss = kiss.filter((element) => message.includes(element))
-  result = isKiss.length > 0 ? 'kiss' : result
-
-  const annoyance = ['psql', 'ganso', 'goose']
-  const isAnnoyance = annoyance.filter((element) => message.includes(element))
-  result = isAnnoyance.length > 0 ? 'annoyance' : result
-
-  const greetings = ['hola', 'buenas', 'holi', 'holiwi', 'hello']
-  const isGreetings = greetings.filter((element) => message.includes(element))
-  result = isGreetings.length > 0 ? 'greetings' : result
-
-  return result
+function getEventType(data: FilterData): FilterData {
+  const eventKey = Object.keys(eventsType).find(key => eventsType[key].includes(data.message));
+  data.event = eventKey ? eventKey : false
+  return data
 }
 
-function addTanukiEvent (TanukiEvent: string): void {
+function addTanukiEvent(TanukiEvent: FilterData): void {
   eventList.push(TanukiEvent)
   console.log(eventList)
 }
 
-function processAltasQueue (): void {
+function processAltasQueue(): void {
   if (!altasQueueStatus) {
     startTanukiEvent(eventList[0])
     setTimeout(clearEvent, 4300)
   }
 }
 
-function startTanukiEvent (tanukiEvent: string): void {
+function startTanukiEvent(tanukiEvent: FilterData): void {
   altasQueueStatus = true
-  getSound(tanukiEvent)
-  startAnimation(tanukiEvent)
-  startLayout(tanukiEvent);
+  if (tanukiEvent.event) {
+    const event = tanukiEvent.event as string
+    if (tanukiEvent.event == "hungry") {
+      
+      if (tanukiHungry > 90) {
+        console.log(tanukiHungry)
+        tanukiEvent.event = "annoyance"
+      } else {
+        console.log("algo va mal")
+        feedTanuki();
+      }
+    }
+    console.log(tanukiEvent.event)
+    getSound(event)
+    startAnimation(event)
+    startLayout(tanukiEvent);
 
-  if (tanukiEvent == "hungry"){
-    feedTanuki();
+
   }
 }
-function getSound (tanukiEvent: string): void {
+function getSound(data: string): void {
   const soundPath = '/assets/sounds/'
   let sound = ''
   let eventSounds: string[] = []
-
-  if (tanukiEvent === 'hungry') {
-    eventSounds = soundsList.hungry
-  }
-  if (tanukiEvent === 'kiss') {
-    eventSounds = soundsList.tanuki
-  }
-  if (tanukiEvent === 'annoyance') {
-    eventSounds = soundsList.annoyance
-  }
-  if (tanukiEvent === 'greetings') {
-    eventSounds = soundsList.tanuki
-  }
-  if(tanukiEvent === 'sleep'){
-    eventSounds= soundsList.sleep;
-  }
-
-  const randomNumber = Math.floor(Math.random() * eventSounds.length)
-  sound = soundPath + eventSounds[randomNumber]
-
-  if (eventSounds.length > 0) {
+  const eventKey = Object.keys(soundsList).find(key => key === data);
+  if (eventKey) {
+    eventSounds = soundsList[eventKey]
+    const randomNumber = Math.floor(Math.random() * eventSounds.length)
+    sound = soundPath + eventSounds[randomNumber]
     startSound(sound)
   }
 }
 
-function startSound (sound: string): void {
-  const audioDiv = document.querySelector('audio') as HTMLAudioElement
-  if (audioDiv.src.length !== 0) {
-    audioDiv.pause()
-  }
-  audioDiv.volume = 0.19
-  audioDiv.src = sound
-  void audioDiv.play()
-}
-function startAnimation (tanukiEvent: string): void {
+function startSound(sound: string): void {
+  const audioDiv: HTMLAudioElement | null = document.querySelector('audio');
+  if (audioDiv) {
+    if (audioDiv.src.length !== 0) {
+      audioDiv.pause()
+    }
+    console.log("cargando audio")
+    audioDiv.volume = 0.19
+    audioDiv.src = sound
 
-  const tanukiDiv = document.querySelector<HTMLDivElement>('div.mapache-frame')!
+    void audioDiv.play()
+  }
+}
+function startAnimation(data: string): void {
+
+  const tanukiDiv: HTMLDivElement | null = document.querySelector('div.mapache-frame')!
 
   tanukiDiv.classList.remove(lastStatus)
-  if(tanukiEvent=="kiss"){
-    tanukiEvent="greetings"
+
+  if (data == "kiss") {
+    data = "greetings"
   }
-  lastStatus = tanukiEvent
-  tanukiDiv.classList.add(tanukiEvent)
+  lastStatus = data
+  tanukiDiv.classList.add(lastStatus)
 }
 
-function startLayout(tanukiEvent: string){
+function startLayout(tanukiEvent: FilterData) {
+  const event = tanukiEvent.event as string;
+  const eventMessage = eventMessages[event]
+  let message = "";
+  if (eventMessage) {
+    if (eventMessage.length > 1)
+      message = `${eventMessage[0]} ${tanukiEvent.userName} ${eventMessage[1]}`
+    else
+      message = `${eventMessage[0]} ${tanukiEvent.userName}`
 
-  if (tanukiEvent === "kiss"){
-    TOOLTIP_DIV.classList.add('show-tooltip')
-    TOOLTIP_INNER.textContent = "💖💖"
+    if (TOOLTIP_DIV && TOOLTIP_INNER) {
+      TOOLTIP_DIV.classList.add('show-tooltip')
+      TOOLTIP_INNER.textContent = message
+    }
   }
-
 }
 
-function clearEvent (): void {
+function clearEvent(): void {
   console.log('Fin del evento')
 
-  TOOLTIP_DIV.classList.remove('show-tooltip')
-  TOOLTIP_INNER.textContent = ""
-
+  if (TOOLTIP_DIV && TOOLTIP_INNER) {
+    TOOLTIP_DIV.classList.remove('show-tooltip')
+    TOOLTIP_INNER.textContent = ""
+  }
   startAnimation('idle')
   eventList.shift()
   console.log(eventList)
