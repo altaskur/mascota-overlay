@@ -10,7 +10,7 @@ const eventsType: Record<string, string[]> = {
 }
 
 const eventMessages: Record<string, string[]> = {
-  greetings: ["¡Hola!"],
+  greetings: ["¡Hola!,"],
   kiss: ["💖", "💖"]
 }
 
