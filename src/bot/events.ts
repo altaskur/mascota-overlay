@@ -47,6 +47,11 @@ export function onNewEvent(data: FilterData): void {
 function getEventType(data: FilterData): FilterData {
   const eventKey = Object.keys(eventsType).find(key => eventsType[key].includes(data.message));
   data.event = eventKey ? eventKey : false
+
+  if(data.firstMessage){
+    data.event = "greetings"
+  }
+
   return data
 }
 
