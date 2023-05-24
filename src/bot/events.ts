@@ -5,7 +5,7 @@ const eventsType: Record<string, string[]> = {
   hungry: ['!comer'],
   sleep: ['!sleep', '!dormir'],
   greetings: ['hola', 'buenas', 'holi', 'holiwi', 'hello'],
-  angry: ['ganso', 'goose'],
+  annoyance: ['ganso', 'goose'],
   kiss: ['!beso', '!besito']
 }
 
@@ -123,6 +123,7 @@ function startAnimation(data: string): void {
 
   if (data == "kiss") {
     data = "greetings"
+
   }
   lastStatus = data
   tanukiDiv.classList.add(lastStatus)
@@ -131,6 +132,19 @@ function startAnimation(data: string): void {
 function startLayout(tanukiEvent: FilterData) {
   const event = tanukiEvent.event as string;
   const eventMessage = eventMessages[event]
+  const randomNumber = Math.floor(Math.random() * 1000)
+
+  if(tanukiEvent.userName.toLowerCase() === "pythonesa"){
+    if(randomNumber <= 250) tanukiEvent.userName = "Besito a ChrisVDev por pythonesa";
+  }
+
+  if(tanukiEvent.userName.toLowerCase() === "chrisvdev"){
+    if(randomNumber <= 300) tanukiEvent.userName = "Nico";
+  }
+  if(tanukiEvent.userName.toLowerCase() === "danirod_"){
+    if(randomNumber <= 800) tanukiEvent.userName = "makigas";
+  }
+
   let message = "";
   if (eventMessage) {
     if (eventMessage.length > 1)
